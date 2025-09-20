@@ -31,13 +31,13 @@ body::before {
 
 body.dark::before {
   background: repeating-linear-gradient(
-    135deg,
+    225deg,
     #000000,
     #000000 20px,
     #ffd700 20px,
     #ffd700 40px
   );
-  opacity: 0.3;
+  opacity: 0.7;
 }
 
 h1 {
