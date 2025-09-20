@@ -51,25 +51,22 @@ async function fetchRecipes(query) {
 }
 
 function displayResults(recipes) {
-  resultsDiv.innerHTML = recipes
-    .map((recipe, index) => {
-      const imgSrc =
-        recipe.image ||
-        "https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png";
-      const url = recipe.sourceUrl || "#"; // fallback to '#' if no URL
+  resultsDiv.innerHTML = recipes.map(recipe => {
+    const imgSrc = recipe.image || "https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png";
+    const url = recipe.sourceUrl || "#";
 
-      return `
-        <div class="recipe-card">
-          <img src="${imgSrc}" alt="${recipe.title}">
-          <div class="recipe-content">
-            <h3>${recipe.title}</h3>
-            <button onclick="openRecipeModal('${url}')">View Recipe</button>
-          </div>
+    return `
+      <div class="recipe-card">
+        <img src="${imgSrc}" alt="${recipe.title}">
+        <div class="recipe-content">
+          <h3>${recipe.title}</h3>
+          <a href="${url}" target="_blank" class="view-recipe-btn">View Recipe</a>
         </div>
-      `;
-    })
-    .join("");
+      </div>
+    `;
+  }).join("");
 }
+
 
 // Modal HTML (put this in your body somewhere)
 const modalHTML = `
