@@ -9,16 +9,22 @@
 <body>
   <button id="dark-mode-toggle">🌙</button>
 
-  <nav id="navbar">
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="ft.html">Spotlight</a>
-  </nav>
-
   <h1>Developers</h1>
   <div id="devs-container" style="padding:20px; text-align:center;">
     <p>Sruthi <3</p>
   </div>
+
+  <!-- Hamburger Menu Button -->
+<div id="hamburger" onclick="toggleSidebar()">☰</div>
+
+<!-- Sidebar Navigation -->
+<div id="sidebar">
+  <a href="index.html">🏠 Home</a>
+  <a href="about.html">ℹ️ About</a>
+  <a href="ft.html">✨ Spotlight</a>
+  <a href="javascript:void(0)" id="close-sidebar" onclick="toggleSidebar()">✖ Close</a>
+</div>
+
 
   <script src="script.js"></script>
 </body>
