@@ -120,24 +120,6 @@ body.dark #dark-mode-toggle {
   transform: scale(1.05);
 }
 
-.view-btn {
-  display: inline-block;
-  margin-top: auto;
-  padding: 10px 14px;
-  background: #ff6f61;
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: 0.3s;
-}
-
-.view-btn:hover {
-  background: #ff3b2f;
-}
-
 
 body.dark #search-input {
   border-color: #ffd369;
