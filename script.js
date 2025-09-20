@@ -20,6 +20,15 @@ searchBtn.addEventListener("click", () => {
   if (query) fetchRecipes(query);
 });
 
+
+// Trigger search on Enter key
+searchInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    const query = searchInput.value.trim();
+    if (query) fetchRecipes(query);
+  }
+});
+
 async function fetchRecipes(query) {
   resultsDiv.innerHTML = "<p>Loading...</p>";
   try {
