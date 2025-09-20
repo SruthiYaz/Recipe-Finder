@@ -33,17 +33,20 @@ async function fetchRecipes(query) {
     const data = await response.json();
 
     if (!response.ok || !data.results || data.results.length === 0) {
-      resultsDiv.innerHTML = "<p>⚠️ API limit reached or no results. Showing sample recipes.</p>";
+      resultsDiv.innerHTML = "<p>⚠️ No results from API. Showing sample recipes.</p>";
       displayResults(sampleRecipes);
       return;
     }
 
-    displayResults(data.results);
+    // Merge API results with sample recipes if needed
+    const finalResults = data.results.length ? data.results : sampleRecipes;
+    displayResults(finalResults);
   } catch {
     resultsDiv.innerHTML = "<p>⚠️ Network/API error. Showing sample recipes.</p>";
     displayResults(sampleRecipes);
   }
 }
+
 
 function displayResults(recipes) {
   resultsDiv.innerHTML = recipes.map(recipe => {
