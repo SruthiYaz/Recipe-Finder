@@ -8,11 +8,14 @@ body {
   align-items: center;
   transition: background 0.4s, color 0.4s;
 
-  /* Gradient + pattern image */
-  background: 
-    linear-gradient(135deg, #ffecd2, #fcb69f),
-    url("https://www.toptal.com/designers/subtlepatterns/patterns/waves.png");
-  background-repeat: repeat;
+  /* Zigzag / waves using repeating linear gradient */
+  background: repeating-linear-gradient(
+    135deg,
+    #ffecd2 0px,
+    #ffecd2 20px,
+    #fcb69f 20px,
+    #fcb69f 40px
+  );
 }
 
 body.dark {
