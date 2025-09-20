@@ -120,6 +120,33 @@ body.dark #dark-mode-toggle {
   transform: scale(1.05);
 }
 
+.view-recipe-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 15px;
+  background: #ff6f61;
+  color: white;
+  font-size: 1rem;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.view-recipe-btn:hover {
+  background: #ff3b2f;
+  transform: translateY(-2px);
+}
+
+body.dark .view-recipe-btn {
+  background: #ffd369;
+  color: #333;
+}
+
+body.dark .view-recipe-btn:hover {
+  background: #ffb703;
+}
+
 
 body.dark #search-input {
   border-color: #ffd369;
