@@ -73,24 +73,43 @@ body.dark #hamburger {
   color: #000;
 }
 
+/* Hamburger icon */
+#hamburger {
+  font-size: 2rem;
+  cursor: pointer;
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 110;
+  color: #ff6f61;
+}
+
+body.dark #hamburger {
+  color: #000;
+}
+
 /* Sidebar */
 #sidebar {
   height: 100%;
   width: 0;
   position: fixed;
-  z-index: 120;
   top: 0;
   left: 0;
   background-color: #ff6f61;
   overflow-x: hidden;
-  transition: 0.3s;
+  transition: width 0.3s ease;
   padding-top: 60px;
   display: flex;
   flex-direction: column;
+  z-index: 120;
 }
 
 body.dark #sidebar {
   background-color: #ffd369;
+}
+
+#sidebar.open {
+  width: 250px;
 }
 
 #sidebar a {
@@ -108,13 +127,6 @@ body.dark #sidebar a {
 #sidebar a:hover {
   background-color: rgba(0,0,0,0.1);
 }
-
-#close-sidebar {
-  margin-top: auto;
-  font-size: 1rem;
-  text-align: center;
-}
-
 
 /* Dark mode toggle */
 #dark-mode-toggle {
