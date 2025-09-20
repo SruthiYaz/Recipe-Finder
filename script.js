@@ -43,22 +43,43 @@ async function fetchRecipes(query) {
 
 function displayResults(recipes) {
   resultsDiv.innerHTML = recipes
-    .map((recipe) => {
+    .map((recipe, index) => {
       const imgSrc =
         recipe.image ||
         "https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png";
-      const url =
-        recipe.sourceUrl ||
-        `https://spoonacular.com/recipes/${recipe.title.replace(/ /g, "-")}-${recipe.id}`;
+      const url = recipe.sourceUrl || "#"; // fallback to '#' if no URL
+
       return `
         <div class="recipe-card">
           <img src="${imgSrc}" alt="${recipe.title}">
           <div class="recipe-content">
             <h3>${recipe.title}</h3>
-            <a href="${url}" target="_blank">View Recipe</a>
+            <button onclick="openRecipeModal('${url}')">View Recipe</button>
           </div>
         </div>
       `;
-    }) // <-- make sure this parenthesis closes the arrow function
+    })
     .join("");
+}
+
+// Modal HTML (put this in your body somewhere)
+const modalHTML = `
+<div id="recipe-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;justify-content:center;align-items:center;">
+  <div style="position:relative;width:90%;height:90%;background:white;border-radius:15px;overflow:hidden;">
+    <button onclick="closeRecipeModal()" style="position:absolute;top:10px;right:10px;z-index:10;padding:5px 10px;font-size:1.2rem;">✖</button>
+    <iframe id="recipe-iframe" src="" style="width:100%;height:100%;border:none;"></iframe>
+  </div>
+</div>
+`;
+document.body.insertAdjacentHTML("beforeend", modalHTML);
+
+function openRecipeModal(url) {
+  if (!url || url === "#") return alert("Recipe link unavailable.");
+  document.getElementById("recipe-iframe").src = url;
+  document.getElementById("recipe-modal").style.display = "flex";
+}
+
+function closeRecipeModal() {
+  document.getElementById("recipe-modal").style.display = "none";
+  document.getElementById("recipe-iframe").src = "";
 }
