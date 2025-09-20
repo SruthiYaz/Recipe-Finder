@@ -233,3 +233,22 @@ body.dark .recipe-card a:hover {
   background: #ffb703;
 }
 
+/* Existing styles ... */
+
+.allergens {
+  margin: 8px 0;
+  display: flex;
+  gap: 6px;
+  font-size: 1.2rem;
+}
+
+.allergen {
+  cursor: help;
+  transition: transform 0.2s;
+}
+
+.allergen:hover {
+  transform: scale(1.3);
+}
+
+
