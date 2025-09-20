@@ -62,24 +62,25 @@ body.dark h1 {
   position: absolute;
   top: 15px;
   right: 15px;
-  background: #ff6f61;
+  background: #ff6f61; /* peachy circle in light mode */
+  color: white; /* white icon */
   border: none;
   border-radius: 50%;
   width: 40px;
   height: 40px;
-  color: white;
   font-size: 1.2rem;
   cursor: pointer;
   transition: 0.3s, background 0.3s;
 }
 
-body.dark #dark-mode-toggle {
-  background: #ffd700;
-  color: #000;
-}
-
 #dark-mode-toggle:hover {
   transform: scale(1.1);
+  background: #ff3b2f; /* darker peach on hover */
+}
+
+body.dark #dark-mode-toggle {
+  background: #ffd700; /* yellow circle in dark mode */
+  color: #000; /* black icon */
 }
 
 #search-container {
