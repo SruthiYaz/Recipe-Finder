@@ -107,18 +107,21 @@ async function fetchRecipes(query) {
 
 // Display Recipes
 function displayResults(recipes) {
+  const defaultImg = "https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png";
+
   resultsDiv.innerHTML = recipes.map(recipe => {
-    const allergensHTML = getAllergenEmojis(recipe.ingredients);
+    const imgSrc = recipe.image && recipe.image.trim() !== "" ? recipe.image : defaultImg;
+    const url = recipe.sourceUrl || "#";
 
     return `
       <div class="recipe-card">
-        <img src="${recipe.image}" alt="${recipe.title}">
+        <img src="${imgSrc}" alt="${recipe.title}" onerror="this.src='${defaultImg}'">
         <div class="recipe-content">
           <h3>${recipe.title}</h3>
-          <div class="allergens">${allergensHTML}</div>
-          <a href="${recipe.sourceUrl}" target="_blank" class="view-recipe-btn">View Recipe</a>
+          <a href="${url}" target="_blank" class="view-recipe-btn">View Recipe</a>
         </div>
       </div>
     `;
   }).join("");
 }
+
