@@ -1,4 +1,3 @@
-/* GLOBAL STYLES */
 body {
   font-family: "Trebuchet MS", Helvetica, sans-serif;
   margin: 0;
@@ -12,7 +11,7 @@ body {
   transition: background 0.4s, color 0.4s;
 }
 
-/* Zigzag pattern overlay */
+/* Light mode diagonal stripes */
 body::before {
   content: "";
   position: absolute;
@@ -31,15 +30,16 @@ body::before {
   z-index: -1;
 }
 
-/* Dark mode overlay */
+/* Dark mode diagonal stripes: black & yellow */
 body.dark::before {
   background: repeating-linear-gradient(
     135deg,
-    #0c0d0e,
-    #0c0d0e 20px,
-    #414345 20px,
-    #414345 40px
+    #000000,      /* black stripe */
+    #000000 20px,
+    #ffd700 20px,  /* gold/yellow stripe */
+    #ffd700 40px
   );
+  opacity: 0.3; /* slightly more visible in dark mode */
 }
 
 /* HEADER */
