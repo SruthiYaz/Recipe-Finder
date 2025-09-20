@@ -25,16 +25,19 @@ const sampleRecipes = [
   }
 ];
 
+// Dark Mode Toggle
 darkModeToggle.addEventListener("click", () => {
   document.body.classList.toggle("dark");
   darkModeToggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
 });
 
+// Search click
 searchBtn.addEventListener("click", () => {
   const query = searchInput.value.trim();
   if (query) fetchRecipes(query);
 });
 
+// Enter key search
 searchInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") {
     const query = searchInput.value.trim();
@@ -57,9 +60,9 @@ const allergenMap = {
   cheese: "🧀"
 };
 
-// Get allergen emojis for a recipe
+// Get allergen emojis
 function getAllergenEmojis(ingredients) {
-  if (!ingredients) return [];
+  if (!ingredients || !ingredients.length) return "";
   const found = [];
   ingredients.forEach(item => {
     const lower = item.toLowerCase();
@@ -69,9 +72,10 @@ function getAllergenEmojis(ingredients) {
       }
     }
   });
-  return found.map(a => `<span class="allergen" title="${a.charAt(0).toUpperCase() + a.slice(1)} allergen">${allergenMap[a]}</span>`).join('');
+  return found.map(a => `<span class="allergen" title="${a.charAt(0).toUpperCase() + a.slice(1)} allergen">${allergenMap[a]}</span>`).join(' ');
 }
 
+// Fetch Recipes
 async function fetchRecipes(query) {
   resultsDiv.innerHTML = "<p>Loading...</p>";
   try {
@@ -86,11 +90,11 @@ async function fetchRecipes(query) {
       return;
     }
 
-    // Map API results to have 'ingredients' array
+    // Map API recipes safely
     const recipes = data.results.map(r => ({
       title: r.title,
-      image: r.image,
-      sourceUrl: r.sourceUrl,
+      image: r.image || sampleRecipes[0].image,
+      sourceUrl: r.sourceUrl || "#",
       ingredients: r.extendedIngredients ? r.extendedIngredients.map(i => i.name) : []
     }));
 
@@ -101,19 +105,18 @@ async function fetchRecipes(query) {
   }
 }
 
+// Display Recipes
 function displayResults(recipes) {
   resultsDiv.innerHTML = recipes.map(recipe => {
-    const imgSrc = recipe.image || "https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png";
-    const url = recipe.sourceUrl || "#";
     const allergensHTML = getAllergenEmojis(recipe.ingredients);
 
     return `
       <div class="recipe-card">
-        <img src="${imgSrc}" alt="${recipe.title}">
+        <img src="${recipe.image}" alt="${recipe.title}">
         <div class="recipe-content">
           <h3>${recipe.title}</h3>
           <div class="allergens">${allergensHTML}</div>
-          <a href="${url}" target="_blank" class="view-recipe-btn">View Recipe</a>
+          <a href="${recipe.sourceUrl}" target="_blank" class="view-recipe-btn">View Recipe</a>
         </div>
       </div>
     `;
