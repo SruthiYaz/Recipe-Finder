@@ -5,39 +5,24 @@ const resultsDiv = document.getElementById("results");
 const darkModeToggle = document.getElementById("dark-mode-toggle");
 
 const sampleRecipes = [
-  { 
-    id:1, title:"Chicken Biryani", 
-    image:"https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png", 
-    sourceUrl:"https://www.indianhealthyrecipes.com/chicken-biryani/", 
-    ingredients: ["chicken", "milk", "rice"] 
-  },
-  { 
-    id:2, title:"Paneer Butter Masala", 
-    image:"https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png", 
-    sourceUrl:"https://www.indianhealthyrecipes.com/paneer-butter-masala/", 
-    ingredients: ["paneer", "cream", "butter"] 
-  },
-  { 
-    id:3, title:"Masala Dosa", 
-    image:"https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png", 
-    sourceUrl:"https://www.indianhealthyrecipes.com/masala-dosa-recipe/", 
-    ingredients: ["rice", "egg", "oil"] 
-  }
+  { id:1, title:"Chicken Biryani", image:"https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png", sourceUrl:"https://www.indianhealthyrecipes.com/chicken-biryani/" },
+  { id:2, title:"Paneer Butter Masala", image:"https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png", sourceUrl:"https://www.indianhealthyrecipes.com/paneer-butter-masala/" },
+  { id:3, title:"Masala Dosa", image:"https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png", sourceUrl:"https://www.indianhealthyrecipes.com/masala-dosa-recipe/" }
 ];
 
-// Dark Mode Toggle
+// Dark mode toggle
 darkModeToggle.addEventListener("click", () => {
   document.body.classList.toggle("dark");
   darkModeToggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
 });
 
-// Search click
+// Search on button click
 searchBtn.addEventListener("click", () => {
   const query = searchInput.value.trim();
   if (query) fetchRecipes(query);
 });
 
-// Enter key search
+// Search on Enter key
 searchInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") {
     const query = searchInput.value.trim();
@@ -45,42 +30,12 @@ searchInput.addEventListener("keypress", (e) => {
   }
 });
 
-// Allergen mapping
-const allergenMap = {
-  milk: "🥛",
-  cream: "🥛",
-  egg: "🥚",
-  fish: "🐟",
-  shellfish: "🦐",
-  peanut: "🥜",
-  "tree nut": "🌰",
-  wheat: "🌾",
-  soy: "🌱",
-  butter: "🧈",
-  cheese: "🧀"
-};
-
-// Get allergen emojis
-function getAllergenEmojis(ingredients) {
-  if (!ingredients || !ingredients.length) return "";
-  const found = [];
-  ingredients.forEach(item => {
-    const lower = item.toLowerCase();
-    for (const allergen in allergenMap) {
-      if (lower.includes(allergen) && !found.includes(allergen)) {
-        found.push(allergen);
-      }
-    }
-  });
-  return found.map(a => `<span class="allergen" title="${a.charAt(0).toUpperCase() + a.slice(1)} allergen">${allergenMap[a]}</span>`).join(' ');
-}
-
-// Fetch Recipes
+// Fetch recipes
 async function fetchRecipes(query) {
   resultsDiv.innerHTML = "<p>Loading...</p>";
   try {
     const response = await fetch(
-      `https://api.spoonacular.com/recipes/complexSearch?query=${encodeURIComponent(query)}&number=9&addRecipeInformation=true&apiKey=${apiKey}`
+      `https://api.spoonacular.com/recipes/complexSearch?query=${encodeURIComponent(query)}&number=9&addRecipeInformation=false&apiKey=${apiKey}`
     );
     const data = await response.json();
 
@@ -90,38 +45,60 @@ async function fetchRecipes(query) {
       return;
     }
 
-    // Map API recipes safely
-    const recipes = data.results.map(r => ({
-      title: r.title,
-      image: r.image || sampleRecipes[0].image,
-      sourceUrl: r.sourceUrl || "#",
-      ingredients: r.extendedIngredients ? r.extendedIngredients.map(i => i.name) : []
-    }));
+    // Fetch full info for each recipe to get allergens
+    const detailedRecipes = await Promise.all(
+      data.results.map(async recipe => {
+        try {
+          const res = await fetch(`https://api.spoonacular.com/recipes/${recipe.id}/information?includeNutrition=false&apiKey=${apiKey}`);
+          const fullInfo = await res.json();
+          return fullInfo;
+        } catch {
+          return recipe; // fallback to basic recipe if detailed fetch fails
+        }
+      })
+    );
 
-    displayResults(recipes);
+    displayResults(detailedRecipes);
   } catch {
     resultsDiv.innerHTML = "<p>⚠️ Network/API error. Showing sample recipes.</p>";
     displayResults(sampleRecipes);
   }
 }
 
-// Display Recipes
-function displayResults(recipes) {
-  const defaultImg = "https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png";
+// Map common allergens to emojis
+function getAllergenEmojis(recipeInfo) {
+  const emojis = [];
+  const ingredients = recipeInfo.extendedIngredients || [];
 
+  const ingredientNames = ingredients.map(i => i.name.toLowerCase());
+
+  if (ingredientNames.some(n => n.includes("milk") || n.includes("cheese") || n.includes("cream"))) emojis.push(`<span title="Dairy 🥛">🥛</span>`);
+  if (ingredientNames.some(n => n.includes("egg"))) emojis.push(`<span title="Egg 🥚">🥚</span>`);
+  if (ingredientNames.some(n => n.includes("peanut") || n.includes("peanuts"))) emojis.push(`<span title="Peanut 🥜">🥜</span>`);
+  if (ingredientNames.some(n => n.includes("wheat") || n.includes("flour") || n.includes("bread"))) emojis.push(`<span title="Gluten 🌾">🌾</span>`);
+  if (ingredientNames.some(n => n.includes("fish") || n.includes("salmon") || n.includes("tuna"))) emojis.push(`<span title="Fish 🐟">🐟</span>`);
+  if (ingredientNames.some(n => n.includes("shellfish") || n.includes("shrimp") || n.includes("crab"))) emojis.push(`<span title="Shellfish 🦐">🦐</span>`);
+
+  return emojis.join(" ");
+}
+
+// Display recipes
+function displayResults(recipes) {
   resultsDiv.innerHTML = recipes.map(recipe => {
-    const imgSrc = recipe.image && recipe.image.trim() !== "" ? recipe.image : defaultImg;
+    const imgSrc = recipe.image || "https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png";
     const url = recipe.sourceUrl || "#";
+
+    const allergenHTML = getAllergenEmojis(recipe);
 
     return `
       <div class="recipe-card">
-        <img src="${imgSrc}" alt="${recipe.title}" onerror="this.src='${defaultImg}'">
+        <img src="${imgSrc}" alt="${recipe.title}">
         <div class="recipe-content">
           <h3>${recipe.title}</h3>
+          <div class="allergens">${allergenHTML}</div>
           <a href="${url}" target="_blank" class="view-recipe-btn">View Recipe</a>
         </div>
       </div>
     `;
   }).join("");
 }
-
