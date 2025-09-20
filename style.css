@@ -8,20 +8,19 @@ body {
   align-items: center;
   transition: background 0.4s, color 0.4s;
 
-  /* Gradient + wavy pattern */
+  /* Gradient + pattern image */
   background: 
     linear-gradient(135deg, #ffecd2, #fcb69f),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cpath d='M0 20 Q20 0 40 20 T80 20' stroke='%23fcb69f' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    url("https://www.toptal.com/designers/subtlepatterns/patterns/waves.png");
   background-repeat: repeat;
 }
 
 body.dark {
   background: 
     linear-gradient(135deg, #0c0d0e, #414345),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cpath d='M0 20 Q20 0 40 20 T80 20' stroke='%23ffd369' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    url("https://www.toptal.com/designers/subtlepatterns/patterns/waves.png");
   color: #eee;
 }
-
 
 h1 {
   color: #333;
