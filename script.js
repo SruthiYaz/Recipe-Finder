@@ -44,17 +44,34 @@ async function fetchRecipes(query) {
 
 function displayResults(recipes) {
   resultsDiv.innerHTML = recipes.map(recipe => {
+    const imgSrc = recipe.image || 'https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png';
     const url = recipe.sourceUrl || `https://spoonacular.com/recipes/${recipe.title.replace(/ /g,"-")}-${recipe.id}`;
     return `
       <div class="recipe-card">
-        <img src="${recipe.image || 'https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png'}"
-             alt="${recipe.title}"
+        <img src="${imgSrc}" alt="${recipe.title}" 
              onerror="this.onerror=null;this.src='https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png';">
         <div class="recipe-content">
           <h3>${recipe.title}</h3>
-          <a href="${url}" target="_blank">View Recipe</a>
+          <button class="view-recipe" data-url="${url}">View Recipe</button>
         </div>
       </div>
     `;
   }).join("");
-}
+
+  // Add event listeners for modal buttons
+  document.querySelectorAll(".view-recipe").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const modal = document.getElementById("recipe-modal");
+      const frame = document.getElementById("recipe-frame");
+      frame.src = btn.getAttribute("data-url");
+      modal.style.display = "flex";
+    });
+  });
+
+  // Close modal
+  document.getElementById("modal-close").addEventListener("click", () => {
+    document.getElementById("recipe-modal").style.display = "none";
+    document.getElementById("recipe-frame").src = "";
+  });
+});
+
