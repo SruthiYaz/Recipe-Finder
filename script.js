@@ -1,6 +1,4 @@
 const apiKey = "2c5260fbaaab48548f813524144c9082"; // 🔑 Replace with your Spoonacular key
-const apiKey = "YOUR_SPOONACULAR_API_KEY";
-
 const searchBtn = document.getElementById("search-btn");
 const searchInput = document.getElementById("search-input");
 const resultsDiv = document.getElementById("results");
