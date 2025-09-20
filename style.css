@@ -73,59 +73,66 @@ body.dark #hamburger {
   color: #ffd369;
 }
 
-/* Hamburger icon */
+/* Sidebar & Hamburger (for future collapsible nav) */
 #hamburger {
-  font-size: 2rem;
-  cursor: pointer;
-  position: absolute;
+  position: fixed;
   top: 15px;
   left: 15px;
-  z-index: 110;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 1100;
   color: #ff6f61;
+  transition: transform 0.3s;
 }
 
-body.dark #hamburger {
-  color: #000;
+#hamburger:hover {
+  transform: scale(1.1);
 }
 
-/* Sidebar */
 #sidebar {
-  height: 100%;
-  width: 0;
   position: fixed;
   top: 0;
-  left: 0;
-  background-color: #ff6f61;
-  overflow-x: hidden;
-  transition: width 0.3s ease;
+  left: -250px;
+  width: 250px;
+  height: 100%;
+  background: #ff6f61;
   padding-top: 60px;
   display: flex;
   flex-direction: column;
-  z-index: 120;
-}
-
-body.dark #sidebar {
-  background-color: #000;
-}
-
-#sidebar.open {
-  width: 250px;
+  gap: 20px;
+  transition: left 0.3s ease;
+  z-index: 1050;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
 }
 
 #sidebar a {
-  padding: 15px 25px;
+  padding: 12px 20px;
   text-decoration: none;
-  font-size: 1.2rem;
   color: white;
-  transition: 0.3s;
-}
-
-body.dark #sidebar a {
-  color: #ffd369;
+  font-weight: 600;
+  transition: background 0.3s;
+  border-radius: 8px;
 }
 
 #sidebar a:hover {
-  background-color: rgba(0,0,0,0.1);
+  background: #ff3b2f;
+}
+
+#sidebar.open {
+  left: 0;
+}
+
+body.dark #sidebar {
+  background: #000;
+}
+
+body.dark #sidebar a {
+  color: #ffd700;
+}
+
+body.dark #sidebar a:hover {
+  background: #333;
 }
 
 /* Dark mode toggle */
