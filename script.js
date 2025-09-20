@@ -15,7 +15,6 @@ function toggleSidebar() {
   sidebar.classList.toggle("open");
 }
 
-
 // Dark mode toggle
 darkModeToggle.addEventListener("click", () => {
   document.body.classList.toggle("dark");
