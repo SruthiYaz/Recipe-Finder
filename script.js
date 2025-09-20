@@ -1,8 +1,14 @@
-const apiKey = "2c5260fbaaab48548f813524144c9082"; // 🔑 Replace with your Spoonacular key
+const apiKey = "2c5260fbaaab48548f813524144c9082"; 
 const searchBtn = document.getElementById("search-btn");
 const searchInput = document.getElementById("search-input");
 const resultsDiv = document.getElementById("results");
 const darkModeToggle = document.getElementById("dark-mode-toggle");
+
+const modal = document.getElementById("recipe-modal");
+const modalTitle = document.getElementById("modal-title");
+const modalImg = document.getElementById("modal-img");
+const modalInstructions = document.getElementById("modal-instructions");
+const modalClose = document.querySelector(".close");
 
 const sampleRecipes = [
   { id:1, title:"Chicken Biryani", image:"https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png", sourceUrl:"https://www.indianhealthyrecipes.com/chicken-biryani/" },
@@ -10,19 +16,16 @@ const sampleRecipes = [
   { id:3, title:"Masala Dosa", image:"https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png", sourceUrl:"https://www.indianhealthyrecipes.com/masala-dosa-recipe/" }
 ];
 
-// Dark Mode Toggle
 darkModeToggle.addEventListener("click", () => {
   document.body.classList.toggle("dark");
   darkModeToggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
 });
 
-// Search Button
 searchBtn.addEventListener("click", () => {
   const query = searchInput.value.trim();
   if (query) fetchRecipes(query);
 });
 
-// Fetch Recipes
 async function fetchRecipes(query) {
   resultsDiv.innerHTML = "<p>Loading...</p>";
   try {
@@ -44,34 +47,46 @@ async function fetchRecipes(query) {
 
 function displayResults(recipes) {
   resultsDiv.innerHTML = recipes.map(recipe => {
-    const imgSrc = recipe.image || 'https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png';
-    const url = recipe.sourceUrl || `https://spoonacular.com/recipes/${recipe.title.replace(/ /g,"-")}-${recipe.id}`;
+    const imgSrc = recipe.image || "https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png";
     return `
       <div class="recipe-card">
-        <img src="${imgSrc}" alt="${recipe.title}" 
-             onerror="this.onerror=null;this.src='https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png';">
+        <img src="${imgSrc}" alt="${recipe.title}">
         <div class="recipe-content">
           <h3>${recipe.title}</h3>
-          <button class="view-recipe" data-url="${url}">View Recipe</button>
+          <a href="#" data-id="${recipe.id}" data-title="${recipe.title}" data-img="${imgSrc}" class="view-recipe-btn">View Recipe</a>
         </div>
       </div>
     `;
   }).join("");
 
-  // Add event listeners for modal buttons
-  document.querySelectorAll(".view-recipe").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const modal = document.getElementById("recipe-modal");
-      const frame = document.getElementById("recipe-frame");
-      frame.src = btn.getAttribute("data-url");
-      modal.style.display = "flex";
+  const viewBtns = document.querySelectorAll(".view-recipe-btn");
+  viewBtns.forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const id = btn.dataset.id;
+      const title = btn.dataset.title;
+      const img = btn.dataset.img;
+      showRecipeModal(id, title, img);
     });
   });
+}
 
-  // Close modal
-  document.getElementById("modal-close").addEventListener("click", () => {
-    document.getElementById("recipe-modal").style.display = "none";
-    document.getElementById("recipe-frame").src = "";
-  });
-});
+async function showRecipeModal(id, title, img) {
+  modalTitle.textContent = title;
+  modalImg.src = img;
+  modalInstructions.innerHTML = "<p>Loading instructions...</p>";
+  modal.style.display = "block";
 
+  try {
+    const response = await fetch(`https://api.spoonacular.com/recipes/${id}/information?apiKey=${apiKey}`);
+    const data = await response.json();
+    modalInstructions.innerHTML = data.instructions 
+      ? data.instructions 
+      : "<p>No instructions available.</p>";
+  } catch {
+    modalInstructions.innerHTML = "<p>Unable to load instructions.</p>";
+  }
+}
+
+modalClose.onclick = () => modal.style.display = "none";
+window.onclick = (e) => { if(e.target == modal) modal.style.display = "none";
