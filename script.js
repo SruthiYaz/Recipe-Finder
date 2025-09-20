@@ -72,7 +72,6 @@ function displayResults(recipes) {
     .join("");
 }
 
-// Open modal with recipe info
 async function openRecipeModal(id) {
   try {
     const response = await fetch(
@@ -80,16 +79,29 @@ async function openRecipeModal(id) {
     );
     const data = await response.json();
 
-    modalTitle.textContent = data.title;
-    modalImg.src = data.image || "";
-    modalSummary.innerHTML = data.summary || "No summary available.";
-    modalLink.href = data.sourceUrl || "#";
+    modalTitle.textContent = data.title || "Untitled Recipe";
+
+    modalImg.src =
+      data.image ||
+      "https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png";
+    modalImg.alt = data.title || "Recipe image";
+
+    modalSummary.innerHTML =
+      data.summary || "<em>Summary unavailable.</em>";
+
+    if (data.sourceUrl) {
+      modalLink.href = data.sourceUrl;
+      modalLink.style.display = "inline-block";
+    } else {
+      modalLink.style.display = "none";
+    }
 
     recipeModal.style.display = "flex";
-  } catch {
+  } catch (err) {
     alert("⚠️ Could not load recipe details.");
   }
 }
+
 
 // Close modal
 closeModal.addEventListener("click", () => {
