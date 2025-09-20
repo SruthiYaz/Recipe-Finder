@@ -105,7 +105,7 @@ body.dark #hamburger {
 }
 
 body.dark #sidebar {
-  background-color: #ffd369;
+  background-color: #000;
 }
 
 #sidebar.open {
@@ -121,7 +121,7 @@ body.dark #sidebar {
 }
 
 body.dark #sidebar a {
-  color: #000;
+  color: #ffd369;
 }
 
 #sidebar a:hover {
