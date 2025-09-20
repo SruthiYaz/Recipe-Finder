@@ -42,14 +42,14 @@ async function fetchRecipes(query) {
   }
 }
 
-// Display Recipes
 function displayResults(recipes) {
   resultsDiv.innerHTML = recipes.map(recipe => {
-    const imgSrc = recipe.image || "https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png";
     const url = recipe.sourceUrl || `https://spoonacular.com/recipes/${recipe.title.replace(/ /g,"-")}-${recipe.id}`;
     return `
       <div class="recipe-card">
-        <img src="${imgSrc}" alt="${recipe.title}">
+        <img src="${recipe.image || 'https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png'}"
+             alt="${recipe.title}"
+             onerror="this.onerror=null;this.src='https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png';">
         <div class="recipe-content">
           <h3>${recipe.title}</h3>
           <a href="${url}" target="_blank">View Recipe</a>
