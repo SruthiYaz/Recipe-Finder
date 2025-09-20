@@ -10,9 +10,15 @@ const sampleRecipes = [
   { id:3, title:"Masala Dosa", image:"https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png", sourceUrl:"https://www.indianhealthyrecipes.com/masala-dosa-recipe/" }
 ];
 
+const darkModeToggle = document.getElementById("dark-mode-toggle");
+
 darkModeToggle.addEventListener("click", () => {
   document.body.classList.toggle("dark");
-  darkModeToggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+  if (document.body.classList.contains("dark")) {
+    darkModeToggle.textContent = "☀️"; // Sun for dark mode
+  } else {
+    darkModeToggle.textContent = "🌙"; // Moon for light mode
+  }
 });
 
 searchBtn.addEventListener("click", () => {
