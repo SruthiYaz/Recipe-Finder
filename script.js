@@ -1,4 +1,4 @@
-const apiKey = "2c5260fbaaab48548f813524144c9082"; 
+const apiKey = "${{ secrets.API_KEY }}"; 
 const searchBtn = document.getElementById("search-btn");
 const searchInput = document.getElementById("search-input");
 const resultsDiv = document.getElementById("results");
