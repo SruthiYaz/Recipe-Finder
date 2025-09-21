@@ -90,13 +90,16 @@ async function fetchRecipes(query, filters, elementId, seed) {
   container.innerHTML = "<p>Loading...</p>";
 
   try {
-    const url = `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=15&addRecipeInformation=true&${filters}&apiKey=${apiKey}`;
+    const url = `https://api.spoonacular.com/recipes/complexSearch?query=${query}&number=10&addRecipeInformation=true&${filters}&apiKey=${apiKey}`;
     const res = await fetch(url);
     const data = await res.json();
 
-    let recipes = (data.results && data.results.length > 0) ? data.results : fallbackRecipes.filter(r => r.title.toLowerCase().includes(query.split(" ")[0]));
+    if (!data.results || data.results.length === 0) {
+      container.innerHTML = "<p>No recipes found.</p>";
+      return;
+    }
 
-    const selected = pickDailyRandom(recipes, 3, seed);
+    const selected = pickDailyRandom(data.results, 3, seed);
 
     container.innerHTML = selected.map(r => `
       <div class="recipe">
@@ -105,15 +108,21 @@ async function fetchRecipes(query, filters, elementId, seed) {
         <p>${r.summary ? r.summary.replace(/<[^>]*>?/gm,'').substring(0,100) + "..." : "Delicious recipe!"}</p>
       </div>
     `).join("");
-  } catch (e) {
+  } catch(e) {
     console.error(e);
     container.innerHTML = "<p>Error fetching recipes.</p>";
   }
 }
 
-// call fetches
-fetchRecipes("gluten", "intolerances=gluten", "gluten-free-carousel", today + "gf");
-fetchRecipes("nut", "intolerances=peanut,tree nut", "nut-free-carousel", today + "nf");
-fetchRecipes("vegan", "diet=vegan", "vegan-carousel", today + "v");
+
+// Gluten-Free Recipes
+fetchRecipes("", "diet=gluten free", "gluten-free-carousel", today+"gf");
+
+// Nut-Free Recipes
+fetchRecipes("", "intolerances=peanut,tree nut", "nut-free-carousel", today+"nf");
+
+// Vegan Recipes
+fetchRecipes("", "diet=vegan", "vegan-carousel", today+"v");
+
 </script>
 
