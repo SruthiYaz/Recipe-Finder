@@ -4,9 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Featured Recipes</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Hamburger for sidebar -->
+  <div id="hamburger" onclick="toggleSidebar()">☰</div>
+
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <a href="index.html">Home</a>
+    <a href="dev.html">Developers</a>
+    <a href="featured.html">Featured</a>
+  </div>
+
+  <!-- Dark mode toggle -->
+  <button id="dark-mode-toggle">🌙</button>
+
   <h1>Featured Recipes</h1>
-<p class="page-description">Don't know what to eat today? Go through our featured assortments of gluten-free, 
-  nut-free, and vegan recipes!</p>
+  <p style="text-align:center; font-size:1.2rem; margin-bottom:30px;">
+    Don't know what to eat today? Go through our featured assortments of gluten-free, nut-free and vegan recipes!
+  </p>
 
   <style>
     body { font-family: "Poppins", sans-serif; background-color: #ffe5d4; margin:0; padding:20px; }
