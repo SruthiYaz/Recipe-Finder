@@ -12,8 +12,12 @@ const sampleRecipes = [
 
 function toggleSidebar() {
   const sidebar = document.getElementById("sidebar");
+  const hamburger = document.getElementById("hamburger");
+
   sidebar.classList.toggle("open");
+  hamburger.classList.toggle("active");
 }
+
 
 // Dark mode toggle
 darkModeToggle.addEventListener("click", () => {
