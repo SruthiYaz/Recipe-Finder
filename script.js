@@ -15,14 +15,29 @@ function toggleSidebar() {
   const hamburger = document.getElementById("hamburger");
 
   sidebar.classList.toggle("open");
-  hamburger.classList.toggle("active");
+  hamburger.classList.toggle("active"); // triggers color change
 }
 
-
-// Dark mode toggle
+// Dark mode toggle with persistence
 darkModeToggle.addEventListener("click", () => {
   document.body.classList.toggle("dark");
-  darkModeToggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+  const isDark = document.body.classList.contains("dark");
+  darkModeToggle.textContent = isDark ? "☀️" : "🌙";
+
+  // Save mode to localStorage
+  localStorage.setItem("theme", isDark ? "dark" : "light");
+});
+
+// On page load → apply saved theme
+window.addEventListener("DOMContentLoaded", () => {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "dark") {
+    document.body.classList.add("dark");
+    darkModeToggle.textContent = "☀️";
+  } else {
+    document.body.classList.remove("dark");
+    darkModeToggle.textContent = "🌙";
+  }
 });
 
 // Search on button click
@@ -62,7 +77,7 @@ async function fetchRecipes(query) {
           const fullInfo = await res.json();
           return fullInfo;
         } catch {
-          return recipe; // fallback to basic recipe if detailed fetch fails
+          return recipe; // fallback if detailed fetch fails
         }
       })
     );
