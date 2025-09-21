@@ -75,7 +75,7 @@ body.dark h1 {
 
 /* when sidebar is open */
 #hamburger.active {
-  color: #000; /* light mode */
+  color: #ffffff; /* light mode */
 }
 
 body.dark #hamburger.active {
