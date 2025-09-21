@@ -67,15 +67,24 @@ function seededRandom(seed) {
 function pickDailyRandom(arr, count, seed) {
   let result = [];
   let indices = [...arr.keys()];
-  for (let i=0; i<count && indices.length>0; i++){
-    let idx = Math.floor(seededRandom(seed+i)*indices.length);
+  for (let i = 0; i < count && indices.length > 0; i++) {
+    let idx = Math.floor(seededRandom(seed + i) * indices.length);
     result.push(arr[indices[idx]]);
-    indices.splice(idx,1);
+    indices.splice(idx, 1);
   }
   return result;
 }
 
-// fetch recipes dynamically
+// fallback recipes
+const fallbackRecipes = [
+  { title: "Gluten-Free Pancakes", image:"https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png", summary:"Fluffy gluten-free pancakes for breakfast." },
+  { title: "Nut-Free Cookies", image:"https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png", summary:"Delicious cookies safe for nut allergies." },
+  { title: "Vegan Salad", image:"https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png", summary:"Fresh vegetables and greens." },
+  { title: "Vegan Stir-Fry", image:"https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png", summary:"Quick and healthy vegan stir-fry." },
+  { title: "Gluten-Free Pizza", image:"https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png", summary:"Tasty pizza without gluten." },
+  { title: "Nut-Free Brownies", image:"https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png", summary:"Rich chocolate brownies safe for nut allergies." }
+];
+
 async function fetchRecipes(query, filters, elementId, seed) {
   const container = document.getElementById(elementId);
   container.innerHTML = "<p>Loading...</p>";
@@ -85,12 +94,9 @@ async function fetchRecipes(query, filters, elementId, seed) {
     const res = await fetch(url);
     const data = await res.json();
 
-    if (!data.results || data.results.length === 0) {
-      container.innerHTML = "<p>No recipes found.</p>";
-      return;
-    }
+    let recipes = (data.results && data.results.length > 0) ? data.results : fallbackRecipes.filter(r => r.title.toLowerCase().includes(query.split(" ")[0]));
 
-    const selected = pickDailyRandom(data.results, 3, seed);
+    const selected = pickDailyRandom(recipes, 3, seed);
 
     container.innerHTML = selected.map(r => `
       <div class="recipe">
@@ -99,16 +105,15 @@ async function fetchRecipes(query, filters, elementId, seed) {
         <p>${r.summary ? r.summary.replace(/<[^>]*>?/gm,'').substring(0,100) + "..." : "Delicious recipe!"}</p>
       </div>
     `).join("");
-  } catch(e) {
+  } catch (e) {
     console.error(e);
     container.innerHTML = "<p>Error fetching recipes.</p>";
   }
 }
 
-// more relaxed filters
-fetchRecipes("gluten", "intolerances=gluten", "gluten-free-carousel", today+"gf");
-fetchRecipes("nut", "intolerances=peanut,tree nut", "nut-free-carousel", today+"nf");
-fetchRecipes("vegan", "diet=vegan", "vegan-carousel", today+"v");
+// call fetches
+fetchRecipes("gluten", "intolerances=gluten", "gluten-free-carousel", today + "gf");
+fetchRecipes("nut", "intolerances=peanut,tree nut", "nut-free-carousel", today + "nf");
+fetchRecipes("vegan", "diet=vegan", "vegan-carousel", today + "v");
 </script>
-</body>
-</html>
+
