@@ -58,22 +58,6 @@ body.dark h1 {
   color: #ffd700;
 }
 
-/* Hamburger icon */
-#hamburger {
-  font-size: 2rem;
-  cursor: pointer;
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  z-index: 110;
-  color: #ff6f61;
-}
-
-body.dark #hamburger {
-  color: #ffd369;
-}
-
-/* Sidebar & Hamburger (for future collapsible nav) */
 #hamburger {
   position: fixed;
   top: 15px;
@@ -81,13 +65,23 @@ body.dark #hamburger {
   font-size: 2rem;
   cursor: pointer;
   z-index: 1100;
-  color: #ff6f61;
-  transition: transform 0.3s;
+  color: #ff6f61; /* default color */
+  transition: color 0.3s, transform 0.3s;
 }
 
 #hamburger:hover {
   transform: scale(1.1);
 }
+
+/* when sidebar is open */
+#hamburger.active {
+  color: #000; /* light mode */
+}
+
+body.dark #hamburger.active {
+  color: #ffd700; /* dark mode */
+}
+
 
 #sidebar {
   position: fixed;
