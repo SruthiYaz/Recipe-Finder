@@ -79,7 +79,7 @@ body.dark h1 {
 }
 
 body.dark #hamburger.active {
-  color: #ffd700; /* dark mode */
+  color:#ffd700 /* dark mode */
 }
 
 
