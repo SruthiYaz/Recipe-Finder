@@ -4,47 +4,149 @@ const searchInput = document.getElementById("search-input");
 const resultsDiv = document.getElementById("results");
 const darkModeToggle = document.getElementById("dark-mode-toggle");
 
-// 🌸 fetch 3 random allergen-free recipes on page load
-window.addEventListener("DOMContentLoaded", () => {
-  applySavedTheme();
-  fetchRandomRecipes(); // 👈 this line auto-loads random recipes
+const sampleRecipes = [
+  {
+    id: 1,
+    title: "Chicken Biryani",
+    image: "https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png",
+    sourceUrl: "https://www.indianhealthyrecipes.com/chicken-biryani/"
+  },
+  {
+    id: 2,
+    title: "Paneer Butter Masala",
+    image: "https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png",
+    sourceUrl: "https://www.indianhealthyrecipes.com/paneer-butter-masala/"
+  },
+  {
+    id: 3,
+    title: "Masala Dosa",
+    image: "https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png",
+    sourceUrl: "https://www.indianhealthyrecipes.com/masala-dosa-recipe/"
+  }
+];
+
+// Sidebar toggle
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const hamburger = document.getElementById("hamburger");
+  sidebar.classList.toggle("open");
+  hamburger.classList.toggle("active");
+}
+
+// Dark mode toggle with persistence
+darkModeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  const isDark = document.body.classList.contains("dark");
+  darkModeToggle.textContent = isDark ? "☀️" : "🌙";
+  localStorage.setItem("theme", isDark ? "dark" : "light");
 });
 
-async function fetchRandomRecipes() {
-  resultsDiv.innerHTML = "<p>Loading random allergen-free recipes...</p>";
+// Apply saved theme on load
+window.addEventListener("DOMContentLoaded", () => {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "dark") {
+    document.body.classList.add("dark");
+    darkModeToggle.textContent = "☀️";
+  } else {
+    document.body.classList.remove("dark");
+    darkModeToggle.textContent = "🌙";
+  }
+});
+
+// Search on button click
+searchBtn.addEventListener("click", () => {
+  const query = searchInput.value.trim();
+  if (query) fetchRecipes(query);
+});
+
+// Search on Enter key
+searchInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    const query = searchInput.value.trim();
+    if (query) fetchRecipes(query);
+  }
+});
+
+// Fetch recipes
+async function fetchRecipes(query) {
+  resultsDiv.innerHTML = "<p>Loading...</p>";
   try {
     const response = await fetch(
-      `https://api.spoonacular.com/recipes/complexSearch?number=12&diet=gluten free&intolerances=peanut,tree nut,dairy,lactose&sort=random&apiKey=${apiKey}`
+      `https://api.spoonacular.com/recipes/complexSearch?query=${encodeURIComponent(query)}&number=9&addRecipeInformation=false&apiKey=${apiKey}`
     );
     const data = await response.json();
 
     if (!response.ok || !data.results || data.results.length === 0) {
-      resultsDiv.innerHTML = "<p>⚠️ Couldn’t load recipes. Showing sample ones.</p>";
+      resultsDiv.innerHTML = "<p>⚠️ API limit reached or no results. Showing sample recipes.</p>";
       displayResults(sampleRecipes);
       return;
     }
 
-    // pick 3 random recipes from the fetched list
-    const randomRecipes = data.results.sort(() => 0.5 - Math.random()).slice(0, 3);
-
-    // fetch full info for allergen detection
+    // Fetch full info for each recipe to get allergens
     const detailedRecipes = await Promise.all(
-      randomRecipes.map(async recipe => {
+      data.results.map(async recipe => {
         try {
           const res = await fetch(
             `https://api.spoonacular.com/recipes/${recipe.id}/information?includeNutrition=false&apiKey=${apiKey}`
           );
-          return await res.json();
+          const fullInfo = await res.json();
+          return fullInfo;
         } catch {
-          return recipe;
+          return recipe; // fallback if detailed fetch fails
         }
       })
     );
 
     displayResults(detailedRecipes);
   } catch (err) {
-    console.error("API error:", err);
+    console.error("Error fetching recipes:", err);
     resultsDiv.innerHTML = "<p>⚠️ Network/API error. Showing sample recipes.</p>";
     displayResults(sampleRecipes);
   }
+}
+
+// Map common allergens to emojis
+function getAllergenEmojis(recipeInfo) {
+  const emojis = [];
+  const ingredients = recipeInfo.extendedIngredients || [];
+  const ingredientNames = ingredients.map(i => i.name.toLowerCase());
+
+  if (ingredientNames.some(n => n.includes("milk") || n.includes("cheese") || n.includes("cream")))
+    emojis.push(`<span title="Dairy 🥛">🥛</span>`);
+  if (ingredientNames.some(n => n.includes("egg")))
+    emojis.push(`<span title="Egg 🥚">🥚</span>`);
+  if (ingredientNames.some(n => n.includes("peanut") || n.includes("peanuts")))
+    emojis.push(`<span title="Peanut 🥜">🥜</span>`);
+  if (ingredientNames.some(n => n.includes("wheat") || n.includes("flour") || n.includes("bread")))
+    emojis.push(`<span title="Gluten 🌾">🌾</span>`);
+  if (ingredientNames.some(n => n.includes("fish") || n.includes("salmon") || n.includes("tuna")))
+    emojis.push(`<span title="Fish 🐟">🐟</span>`);
+  if (ingredientNames.some(n => n.includes("shellfish") || n.includes("shrimp") || n.includes("crab")))
+    emojis.push(`<span title="Shellfish 🦐">🦐</span>`);
+
+  return emojis.join(" ");
+}
+
+// Display recipes
+function displayResults(recipes) {
+  resultsDiv.innerHTML = recipes
+    .map(recipe => {
+      const imgSrc =
+        recipe.image ||
+        "https://d29fhpw069ctt2.cloudfront.net/clipart/101307/preview/iammisc_Dinner_Plate_with_Spoon_and_Fork_preview_6a8b.png";
+      const url = recipe.sourceUrl || "#";
+      const allergenHTML = getAllergenEmojis(recipe);
+
+      return `
+        <div class="recipe-card">
+          <img src="${imgSrc}" alt="${recipe.title}">
+          <div class="recipe-content">
+            <h3>${recipe.title}</h3>
+            <div class="allergens">${allergenHTML}</div>
+            <a href="${url}" target="_blank" class="view-recipe-btn">View Recipe</a>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
 }
